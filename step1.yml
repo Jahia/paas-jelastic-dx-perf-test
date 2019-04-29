@@ -1,21 +1,15 @@
 ---
 type: update
 version: 1.5
-name: Jahia - Digital Experience Manager 7.3.1.0
+name: Jahia - Setup performance test environment
 logo: /images/jahia-logo-70x70.png
-id: jahia-dx
-description:
-  short: Jahia - Digital Experience Manager 7.3.1.0
-  text: Digital Experience Manager gives you an agile customizable platform that manages
-    your entire digital ecosystem to innovate and deliver great customer experiences,
-    foster internal collaboration and support dynamic business needs for sustainable
-    growth.
+id: jahia-perf-test
 baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
 
 globals:
   defaultCredentials: root:root
   jahiaPropertiesPath: /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-  url_universal_package: https://github.com/Jahia/paas_jelastic_dx_universal/raw/1.0
+  ldapIP: 3.213.234.199
 
 onInstall:
   - setGlobals:
@@ -43,10 +37,14 @@ onInstall:
     - yum install -y ffmpeg
     - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' ${globals.jahiaPropertiesPath}
     - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' ${globals.jahiaPropertiesPath}
+    - sed -i 's/jahiaToolManagerUsername.*/jahiaToolManagerUsername = jahia/' ${globals.jahiaPropertiesPath}
     - sed -i '2i atmosphere.useWebsockets=true' ${globals.jahiaPropertiesPath}
     - sed -i '2i atmosphere.asyncSupport=org.atmosphere.container.JSR356AsyncSupport' ${globals.jahiaPropertiesPath}
     - sed -i '2i org.jahia.ehcachemanager.maxBytesLocalHeap=300M' ${globals.jahiaPropertiesPath}
     - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' ${globals.jahiaPropertiesPath}
+    - echo "user.uid.search.name=dc\=jahia,dc\=com" > /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
+    - echo "url=ldap\://${globals.ldapIP}" >> /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
+    - chown tomcat:tomcat /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
   - cmd [proc]:
     - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' ${globals.jahiaPropertiesPath}
     - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' ${globals.jahiaPropertiesPath}
