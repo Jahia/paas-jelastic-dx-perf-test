@@ -14,6 +14,7 @@ baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
 
 globals:
   defaultCredentials: root:root
+  jahiaPropertiesPath: /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
   url_universal_package: https://github.com/Jahia/paas_jelastic_dx_universal/raw/1.0
 
 onInstall:
@@ -40,20 +41,21 @@ onInstall:
     - yum install -y ImageMagick-devel
     - yum install -y libreoffice*
     - yum install -y ffmpeg
-    - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i atmosphere.useWebsockets=true' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i atmosphere.asyncSupport=org.atmosphere.container.JSR356AsyncSupport' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i org.jahia.ehcachemanager.maxBytesLocalHeap=300M' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' ${globals.jahiaPropertiesPath}
+    - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' ${globals.jahiaPropertiesPath}
+    - sed -i '2i atmosphere.useWebsockets=true' ${globals.jahiaPropertiesPath}
+    - sed -i '2i atmosphere.asyncSupport=org.atmosphere.container.JSR356AsyncSupport' ${globals.jahiaPropertiesPath}
+    - sed -i '2i org.jahia.ehcachemanager.maxBytesLocalHeap=300M' ${globals.jahiaPropertiesPath}
+    - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' ${globals.jahiaPropertiesPath}
   - cmd [proc]:
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=256' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' ${globals.jahiaPropertiesPath}
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' ${globals.jahiaPropertiesPath}
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=256' ${globals.jahiaPropertiesPath}
   - cmd [cp]:
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=128' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=512' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=128' ${globals.jahiaPropertiesPath}
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=512' ${globals.jahiaPropertiesPath}
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' ${globals.jahiaPropertiesPath}
   - cmd [proc]:
     - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/DXPerformanceTestSite_staging_7231.zip
+    - chown tomcat:tomcat DXPerformanceTestSite_staging_7231.zip
     - mv DXPerformanceTestSite_staging_7231.zip /data/digital-factory-data/imports
