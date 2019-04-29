@@ -1,0 +1,72 @@
+---
+type: install
+version: 0.1
+name: Jahia - Digital Experience Manager 7.3.1.0
+logo: /images/jahia-logo-70x70.png
+id: jahia-dx
+description:
+  short: Jahia - Digital Experience Manager 7.3.1.0
+  text: Digital Experience Manager gives you an agile customizable platform that manages
+    your entire digital ecosystem to innovate and deliver great customer experiences,
+    foster internal collaboration and support dynamic business needs for sustainable
+    growth.
+baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
+
+globals:
+  dx_version: 7.3.1.0
+  url_package: ${baseUrl}
+  url_universal_package: https://github.com/Jahia/paas_jelastic_dx_universal/raw/1.0
+
+settings:
+  fields: 
+  - name: rootpwd
+    type: string
+    caption: Jahia DX root password
+    vtype: text
+    required: true
+  - name: toolspwd
+    type: string
+    caption: Jahia tools password
+    vtype: text
+    required: true
+  - name: browsingCount
+    type: string
+    caption: Number of DX browsing nodes
+    vtype: text
+    required: true
+  - name: mode
+    type: radio-fieldset
+    caption: Operating Mode
+    values:
+      production: production
+      development: development
+    default: production
+    showIf:
+      production:
+        - name: ddogApikey
+          type: string
+          caption: Datadog API KEY
+          required: true
+          vtype: text
+  - name: shortdomain
+    type: envname
+    caption: Environment
+    required: true 
+  - name: displayname
+    type: string 
+    caption: Display Name 
+    default: Jahia - Digital Experience Manager 7.3.1.0
+    required: true
+
+onInstall:
+  - install: 
+      jps: ${globals.url_universal_package}/dx-cluster-universal.yml
+      shortdomain: ${settings.shortdomain}
+      settings:
+        shortdomain: ${settings.shortdomain}
+        dxVersion: ${globals.dx_version}
+        rootpwd: ${settings.rootpwd}
+        toolspwd: ${settings.toolspwd}
+        browsingCount: ${settings.browsingCount}
+        mode: ${settings.mode}
+        ddogApikey: ${settings.ddogApikey}
