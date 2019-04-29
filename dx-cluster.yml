@@ -1,6 +1,6 @@
 ---
-type: install
-version: 0.1
+type: update
+version: 1.5
 name: Jahia - Digital Experience Manager 7.3.1.0
 logo: /images/jahia-logo-70x70.png
 id: jahia-dx
@@ -13,60 +13,47 @@ description:
 baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
 
 globals:
-  dx_version: 7.3.1.0
-  url_package: ${baseUrl}
+  defaultCredentials: root:root
   url_universal_package: https://github.com/Jahia/paas_jelastic_dx_universal/raw/1.0
 
-settings:
-  fields: 
-  - name: rootpwd
-    type: string
-    caption: Jahia DX root password
-    vtype: text
-    required: true
-  - name: toolspwd
-    type: string
-    caption: Jahia tools password
-    vtype: text
-    required: true
-  - name: browsingCount
-    type: string
-    caption: Number of DX browsing nodes
-    vtype: text
-    required: true
-  - name: mode
-    type: radio-fieldset
-    caption: Operating Mode
-    values:
-      production: production
-      development: development
-    default: production
-    showIf:
-      production:
-        - name: ddogApikey
-          type: string
-          caption: Datadog API KEY
-          required: true
-          vtype: text
-  - name: shortdomain
-    type: envname
-    caption: Environment
-    required: true 
-  - name: displayname
-    type: string 
-    caption: Display Name 
-    default: Jahia - Digital Experience Manager 7.3.1.0
-    required: true
-
 onInstall:
-  - install: 
-      jps: ${globals.url_universal_package}/dx-cluster-universal.yml
-      shortdomain: ${settings.shortdomain}
-      settings:
-        shortdomain: ${settings.shortdomain}
-        dxVersion: ${globals.dx_version}
-        rootpwd: ${settings.rootpwd}
-        toolspwd: ${settings.toolspwd}
-        browsingCount: ${settings.browsingCount}
-        mode: ${settings.mode}
-        ddogApikey: ${settings.ddogApikey}
+  - setGlobals:
+    xmx: 6G
+  - cmd [proc]:
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/calendar/2.0.6/calendar-2.0.6.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@calendar-2.0.6.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/event/2.0.3/event-2.0.3.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@event-2.0.3.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/ldap/3.1.5/ldap-3.1.5.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@ldap-3.1.5.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/news/2.0.4/news-2.0.4.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@news-2.0.4.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/publication/2.0.2/publication-2.0.2.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@publication-2.0.2.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/remotepublish/8.2.2/remotepublish-8.2.2.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@remotepublish-8.2.2.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/sitemap/2.0.5/sitemap-2.0.5.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@sitemap-2.0.5.jar --form start=true http://localhost:8080/modules/api/bundles/
+    - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/templates-web-blue-qa-2.0.2-SNAPSHOT.jar
+    - curl -s --user ${globals.defaultCredentials} --form bundle=@templates-web-blue-qa-2.0.2-SNAPSHOT.jar --form start=true http://localhost:8080/modules/api/bundles/
+  - cmd [cp,proc]:
+    - yum install -y ImageMagick-devel
+    - yum install -y libreoffice*
+    - yum install -y ffmpeg
+    - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i atmosphere.useWebsockets=true' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i atmosphere.asyncSupport=org.atmosphere.container.JSR356AsyncSupport' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i org.jahia.ehcachemanager.maxBytesLocalHeap=300M' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+  - cmd [proc]:
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=256' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+  - cmd [cp]:
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=128' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=512' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
+  - cmd [proc]:
+    - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/DXPerformanceTestSite_staging_7231.zip
+    - mv DXPerformanceTestSite_staging_7231.zip /data/digital-factory-data/imports
