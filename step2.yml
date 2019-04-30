@@ -12,48 +12,6 @@ globals:
   ldapIP: 3.213.234.199
 
 onInstall:
-  - setGlobals:
-    xmx: 6G
-  - cmd [proc]:
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/calendar/2.0.6/calendar-2.0.6.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@calendar-2.0.6.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/event/2.0.3/event-2.0.3.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@event-2.0.3.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/ldap/3.1.5/ldap-3.1.5.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@ldap-3.1.5.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/news/2.0.4/news-2.0.4.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@news-2.0.4.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/publication/2.0.2/publication-2.0.2.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@publication-2.0.2.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/remotepublish/8.2.2/remotepublish-8.2.2.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@remotepublish-8.2.2.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/sitemap/2.0.5/sitemap-2.0.5.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@sitemap-2.0.5.jar --form start=true http://localhost:8080/modules/api/bundles/
-    - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/templates-web-blue-qa-2.0.2-SNAPSHOT.jar
-    - curl -s --user ${globals.defaultCredentials} --form bundle=@templates-web-blue-qa-2.0.2-SNAPSHOT.jar --form start=true http://localhost:8080/modules/api/bundles/
   - cmd [cp,proc]:
-    - yum install -y ImageMagick-devel
-    - yum install -y libreoffice*
-    - yum install -y ffmpeg
-    - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' ${globals.jahiaPropertiesPath}
-    - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' ${globals.jahiaPropertiesPath}
-    - sed -i 's/jahiaToolManagerUsername.*/jahiaToolManagerUsername = jahia/' ${globals.jahiaPropertiesPath}
-    - sed -i '2i atmosphere.useWebsockets=true' ${globals.jahiaPropertiesPath}
-    - sed -i '2i atmosphere.asyncSupport=org.atmosphere.container.JSR356AsyncSupport' ${globals.jahiaPropertiesPath}
-    - sed -i '2i org.jahia.ehcachemanager.maxBytesLocalHeap=300M' ${globals.jahiaPropertiesPath}
-    - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' ${globals.jahiaPropertiesPath}
-    - echo "user.uid.search.name=dc\=jahia,dc\=com" > /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
-    - echo "url=ldap\://${globals.ldapIP}" >> /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
-    - chown tomcat:tomcat /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
-  - cmd [proc]:
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' ${globals.jahiaPropertiesPath}
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' ${globals.jahiaPropertiesPath}
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=256' ${globals.jahiaPropertiesPath}
-  - cmd [cp]:
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=128' ${globals.jahiaPropertiesPath}
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=512' ${globals.jahiaPropertiesPath}
-    - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' ${globals.jahiaPropertiesPath}
-  - cmd [proc]:
-    - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/DXPerformanceTestSite_staging_7231.zip
-    - chown tomcat:tomcat DXPerformanceTestSite_staging_7231.zip
-    - mv DXPerformanceTestSite_staging_7231.zip /data/digital-factory-data/imports
+    - token=$(curl -u manager:password localhost:8080/modules/tools/precompileServlet | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
+    - curl localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}

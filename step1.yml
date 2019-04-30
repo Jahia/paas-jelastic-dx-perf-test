@@ -12,8 +12,6 @@ globals:
   ldapIP: 3.213.234.199
 
 onInstall:
-  - setGlobals:
-    xmx: 6G
   - cmd [proc]:
     - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/calendar/2.0.6/calendar-2.0.6.jar
     - curl -s --user ${globals.defaultCredentials} --form bundle=@calendar-2.0.6.jar --form start=true http://localhost:8080/modules/api/bundles/
