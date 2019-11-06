@@ -30,9 +30,9 @@ onInstall:
     - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/templates-web-blue-qa-2.0.2-SNAPSHOT.jar
     - curl -s --user ${globals.defaultCredentials} --form bundle=@templates-web-blue-qa-2.0.2-SNAPSHOT.jar --form start=true http://localhost:8080/modules/api/bundles/
   - cmd [cp,proc]:
-    - yum install -y ImageMagick-devel
-    - yum install -y libreoffice*
-    - yum install -y ffmpeg
+    - sudo yum install -y ImageMagick-devel
+    - sudo yum install -y libreoffice*
+    - sudo yum install -y ffmpeg
     - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' ${globals.jahiaPropertiesPath}
     - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' ${globals.jahiaPropertiesPath}
     - sed -i 's/jahiaToolManagerUsername.*/jahiaToolManagerUsername = jahia/' ${globals.jahiaPropertiesPath}
@@ -42,7 +42,6 @@ onInstall:
     - sed -i '2i org.jahia.ehcachemanager.big.maxBytesLocalHeap=2500M' ${globals.jahiaPropertiesPath}
     - echo "user.uid.search.name=dc\=jahia,dc\=com" > /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
     - echo "url=ldap\://${globals.ldapIP}" >> /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
-    - chown tomcat:tomcat /data/digital-factory-data/modules/org.jahia.services.usermanager.ldap-cloud-perf.cfg
   - cmd [proc]:
     - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.default=192' ${globals.jahiaPropertiesPath}
     - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=256' ${globals.jahiaPropertiesPath}
@@ -53,5 +52,4 @@ onInstall:
     - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' ${globals.jahiaPropertiesPath}
   - cmd [proc]:
     - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/DXPerformanceTestSite_staging_7231.zip
-    - chown tomcat:tomcat DXPerformanceTestSite_staging_7231.zip
     - mv DXPerformanceTestSite_staging_7231.zip /data/digital-factory-data/imports

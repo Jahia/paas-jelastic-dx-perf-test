@@ -16,4 +16,4 @@ onInstall:
     - curl -u ${globals.toolsCredentials} 'http://localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}'
     - token=$(curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
     - curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}'
-    - service tomcat restart
+    - sudo service tomcat restart
