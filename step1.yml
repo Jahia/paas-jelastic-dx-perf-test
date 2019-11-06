@@ -32,6 +32,9 @@ onInstall:
   - cmd [cp,proc]:
     - sudo yum install -y ImageMagick-devel
     - sudo yum install -y libreoffice*
+    # Next 2 lines are mandatory for package ffmpeg to be installed
+    - sudo rpm --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
+    - sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
     - sudo yum install -y ffmpeg
     - sed -i 's/#jahia.dm.thumbnails.video.enabled.*/jahia.dm.thumbnails.video.enabled = true/' ${globals.jahiaPropertiesPath}
     - sed -i 's/#jahia.dm.thumbnails.video.ffmpeg.*/jahia.dm.thumbnails.video.ffmpeg = ffmpeg/' ${globals.jahiaPropertiesPath}
