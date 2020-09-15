@@ -6,7 +6,7 @@ logo: /images/jahia-logo-70x70.png
 id: jahia-perf-test
 
 globals:
-  defaultCredentials: ${settings.defaultCredentials}
+  rootCredentials: ${settings.rootCredentials}
   jahiaPropertiesPath: /opt/tomcat/conf/digital-factory-config/jahia/jahia.properties
   ldapIP: 3.213.234.199
 
@@ -31,22 +31,23 @@ onInstall:
           sitemap_version: 2.0.5
       
   - cmd [proc]:
+      - credentials="${globals.rootCredentials}"
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/calendar/${globals.calendar_version}/calendar-${globals.calendar_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@calendar-${globals.calendar_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@calendar-${globals.calendar_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/event/${globals.event_version}/event-${globals.event_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@event-${globals.event_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@event-${globals.event_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/ldap/${globals.ldap_version}/ldap-${globals.ldap_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@ldap-${globals.ldap_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@ldap-${globals.ldap_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/news/${globals.news_version}/news-${globals.news_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@news-${globals.news_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@news-${globals.news_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/publication/${globals.publication_version}/publication-${globals.publication_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@publication-${globals.publication_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@publication-${globals.publication_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/remotepublish/${globals.remotepublish_version}/remotepublish-${globals.remotepublish_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@remotepublish-${globals.remotepublish_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@remotepublish-${globals.remotepublish_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://store.jahia.com/cms/mavenproxy/private-app-store/org/jahia/modules/sitemap/${globals.sitemap_version}/sitemap-${globals.sitemap_version}.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@sitemap-${globals.sitemap_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@sitemap-${globals.sitemap_version}.jar --form start=true http://localhost:8080/modules/api/bundles/
       - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/templates-web-blue-qa-2.0.2-SNAPSHOT.jar
-      - curl -s --user ${globals.defaultCredentials} --form bundle=@templates-web-blue-qa-2.0.2-SNAPSHOT.jar --form start=true http://localhost:8080/modules/api/bundles/
+      - curl -s --user ${credentials} --form bundle=@templates-web-blue-qa-2.0.2-SNAPSHOT.jar --form start=true http://localhost:8080/modules/api/bundles/
   - cmd [cp,proc]:
       - sudo yum install -y ImageMagick-devel
       - sudo yum install -y libreoffice*
@@ -77,9 +78,9 @@ onInstall:
 
 settings:
   fields:
-    - name: defaultCredentials
+    - name: rootCredentials
       type: string
       default: root:root
-      caption: Credentials
+      caption: Root credentials
       vtype: text
       required: false
