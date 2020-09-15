@@ -7,7 +7,7 @@ id: jahia-perf-test
 baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
 
 globals:
-  defaultCredentials: root:root
+  defaultCredentials: ${settings.defaultCredentials}
   toolsCredentials: jahia:password
 
 onInstall:
@@ -17,3 +17,12 @@ onInstall:
       - token=$(curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
       - curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}'
       - sudo service tomcat restart
+
+settings:
+  fields:
+    - name: defaultCredentials
+      type: string
+      default: root:root
+      caption: Credentials
+      vtype: text
+      required: false
