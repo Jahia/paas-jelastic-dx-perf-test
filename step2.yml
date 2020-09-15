@@ -6,22 +6,21 @@ logo: /images/jahia-logo-70x70.png
 id: jahia-perf-test
 
 globals:
-  defaultCredentials: ${settings.defaultCredentials}
-  toolsCredentials: jahia:password
+  toolsPassword: ${settings.toolsPassword}
 
 onInstall:
   - cmd [cp,proc]:
-      - token=$(curl -u ${globals.toolsCredentials} 'http://localhost:8080/modules/tools/precompileServlet' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
-      - curl -u ${globals.toolsCredentials} 'http://localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}'
-      - token=$(curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
-      - curl -u ${globals.toolsCredentials} 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}'
+      - token=$(curl -u "jahia:${globals.toolsPassword}" 'http://localhost:8080/modules/tools/precompileServlet' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
+      - curl -u "jahia:${globals.toolsPassword}" 'http://localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}'
+      - token=$(curl -u "jahia:${globals.toolsPassword}" 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
+      - curl -u "jahia:${globals.toolsPassword}" 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}'
       - sudo service tomcat restart
 
 settings:
   fields:
-    - name: defaultCredentials
+    - name: toolsPassword
       type: string
-      default: root:root
-      caption: Credentials
+      default: password
+      caption: Tools password
       vtype: text
       required: false

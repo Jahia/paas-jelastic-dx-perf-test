@@ -73,6 +73,8 @@ onInstall:
       - sed -i '2i jahia.jackrabbit.bundleCacheSize.workspace.live=512' ${globals.jahiaPropertiesPath}
       - sed -i '2i jahia.jackrabbit.bundleCacheSize.versioning=128' ${globals.jahiaPropertiesPath}
   - cmd [proc]:
+      - sudo service tomcat restart
+      - sleep 30
       - wget https://github.com/Jahia/paas-jelastic-dx-perf-test/raw/master/assets/DXPerformanceTestSite_staging_7231.zip
       - mv DXPerformanceTestSite_staging_7231.zip /data/digital-factory-data/imports
 
