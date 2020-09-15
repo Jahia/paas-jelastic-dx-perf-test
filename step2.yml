@@ -4,7 +4,6 @@ version: 1.5
 name: Jahia - Setup performance test environment
 logo: /images/jahia-logo-70x70.png
 id: jahia-perf-test
-baseUrl: https://github.com/Jahia/paas_jelastic_dx/raw/7.3.1.0
 
 globals:
   defaultCredentials: ${settings.defaultCredentials}
