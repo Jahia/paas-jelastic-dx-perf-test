@@ -10,11 +10,12 @@ globals:
 
 onInstall:
   - cmd [cp,proc]:
-      - token=$(curl -u "jahia:${globals.toolsPassword}" 'http://localhost:8080/modules/tools/precompileServlet' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
-      - curl -u "jahia:${globals.toolsPassword}" 'http://localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}'
-      - token=$(curl -u "jahia:${globals.toolsPassword}" 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
-      - curl -u "jahia:${globals.toolsPassword}" 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}'
-      - sudo service tomcat restart
+      - credentials="jahia:${globals.toolsPassword}"
+      - token=$(curl -u "${credentials}" 'http://localhost:8080/modules/tools/precompileServlet' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
+      - curl -uf "${credentials}" 'http://localhost:8080/modules/tools/precompileServlet?compile_type=all&jsp_precompile=true&toolAccessToken=${token}' || exit 1
+      - token=$(curl -u "${credentials}" 'localhost:8080/modules/tools/search.jsp' | grep -Eo 'toolAccessToken=[a-zA-Z0-9\-]+' | head -1 | cut -d '=' -f2)
+      - curl -uf "${credentials}" 'localhost:8080/modules/tools/search.jsp?action=updateSpellCheckerIndex&toolAccessToken=${token}' || exit 1
+      - sudo service tomcat restart || exit 1
 
 settings:
   fields:
